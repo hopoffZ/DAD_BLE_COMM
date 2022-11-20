@@ -16,6 +16,7 @@
 #define SENDER_H_
 
 #include "structures.h" //structures header file
+#include "packager.h"
 
 struct Sender{
     octuplet sensorType[8]; //array of 8 sensor types
