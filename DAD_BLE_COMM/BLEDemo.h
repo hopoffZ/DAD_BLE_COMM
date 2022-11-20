@@ -1,14 +1,8 @@
-/*****< HRPDemo.h >************************************************************/
-/*      Copyright 2012 - 2014 Stonestreet One.                                */
-/*      All Rights Reserved.                                                  */
+/*****< BLEDemo.h >************************************************************/
 /*                                                                            */
-/*      Copyright 2015 Texas Instruments Incorporated.                        */
-/*      All Rights Reserved.                                                  */
+/*  BLEDemo - Embedded Bluetooth communication profile using BLE              */
 /*                                                                            */
-/*  HRPDemo - Embedded Bluetooth Heart Rate Monitor Profile using GATT (LE)   */
-/*            application.                                                    */
-/*                                                                            */
-/*  Author:  Ryan Byrne                                                       */
+/*  Author:  Alex Miller                                                      */
 /*                                                                            */
 /*** MODIFICATION HISTORY *****************************************************/
 /*                                                                            */

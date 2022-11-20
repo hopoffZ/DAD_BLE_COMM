@@ -1,25 +1,18 @@
-/*****< HRPDemo.c >************************************************************/
-/*      Copyright 2012 - 2014 Stonestreet One.                                */
-/*      All Rights Reserved.                                                  */
+/*****< BLEDemo.c >************************************************************/
 /*                                                                            */
-/*      Copyright 2015 Texas Instruments Incorporated.                        */
-/*      All Rights Reserved.                                                  */
+/*  BLEDemo - Embedded Bluetooth communication profile using BLE              */
 /*                                                                            */
-/*  HRPDemo - Embedded Bluetooth Heart Rate Monitor Profile using GATT (LE)   */
-/*            application.                                                    */
-/*                                                                            */
-/*  Author:  Ryan Byrne                                                       */
+/*  Author:  Alex Miller                                                      */
 /*                                                                            */
 /*** MODIFICATION HISTORY *****************************************************/
 /*                                                                            */
 /*   mm/dd/yy  F. Lastname    Description of Modification                     */
 /*   --------  -----------    ------------------------------------------------*/
-/*   05/28/12  Ryan Byrne     Initial creation.                               */
-/*   03/03/15  D. Horowitz    Adding Demo Application version.                */
+/*   11/20/22  A. Miller      Initial creation.                               */
 /******************************************************************************/
+#include <BLEDemo.h>             /* Application Header.                       */
 #include <stdio.h>               /* Included for sscanf.                      */
 #include "Main.h"                /* Application Interface Abstraction.        */
-#include "HRPDemo.h"             /* Application Header.                       */
 #include "SS1BTPS.h"             /* Main SS1 BT Stack Header.                 */
 #include "SS1BTGAT.h"            /* Main SS1 GATT Header.                     */
 #include "SS1BTGAP.h"            /* Main SS1 GAP Service Header.              */
