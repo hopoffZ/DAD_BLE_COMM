@@ -322,7 +322,7 @@ typedef __PACKED_STRUCT_BEGIN__ struct _tagSM_Security_Request_t
    /* Distribution Fields.  The following MACRO is used to set a bit.   */
    /* The first parameter to this MACRO is a Byte_t variable that the   */
    /* bit will be SET in.  The next is the bit to set (should be of the */
-   /* form SM_KEY_DISTRIBUTION_xxx_KEY_BIT_NUMBER where 'xxx' is the Key*/
+   /* form SM_KEY_DISTRIBUTION_xxx_KEY_BIT_NUMBER where '*/
    /* Bit Position to set.                                              */
 #define SM_SET_KEY_DISTRIBUTION_BIT(_x,_y)  \
    ((Byte_t *)(_x))[0] |= (Byte_t)(1 << ((_y)%(BYTE_SIZE*8)))
@@ -332,7 +332,7 @@ typedef __PACKED_STRUCT_BEGIN__ struct _tagSM_Security_Request_t
    /* Distribution Fields.  The following MACRO is used to clear a bit. */
    /* The first parameter to this MACRO is a Byte_t variable that the   */
    /* bit will be CLEARED in.  The next is the bit to set (should be of */
-   /* the form SM_KEY_DISTRIBUTION_xxx_KEY_BIT_NUMBER where 'xxx' is the*/
+   /* the form SM_KEY_DISTRIBUTION_xxx_KEY_BIT_NUMBER where '*/
    /* Key Bit Position to set.                                          */
 #define SM_RESET_KEY_DISTRIBUTION_BIT(_x,_y)  \
    ((Byte_t *)(_x))[0] &= (Byte_t)~(1 << ((_y)%(BYTE_SIZE*8)))
@@ -342,7 +342,7 @@ typedef __PACKED_STRUCT_BEGIN__ struct _tagSM_Security_Request_t
    /* Distribution Fields. The following MACRO is used to test a bit.   */
    /* The first parameter to this MACRO is a Byte_t variable that       */
    /* the bit will be tested. The next is the bit to be tested (should  */
-   /* be of the form SM_KEY_DISTRIBUTION_xxx_KEY_BIT_NUMBER where 'xxx' */
+   /* be of the form SM_KEY_DISTRIBUTION_xxx_KEY_BIT_NUMBER where '' */
    /* is the Key Bit Position to set.                                   */
 #define SM_TEST_KEY_DISTRIBUTION_BIT(_x, _y)  \
    ((((Byte_t *)(_x))[0]) & (Byte_t)(1 << ((_y)%(BYTE_SIZE*8))))

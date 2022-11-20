@@ -78,11 +78,16 @@ void HAL_EnableController(void);
    /* will receive the UART characters a the length of the buffer.  The */
    /* function will return the number of characters that were returned  */
    /* in Buffer.                                                        */
+//TODO: delete
 int HAL_ConsoleRead(unsigned int Length, char *Buffer);
+
+
+//TODO: add HAL_SPERead and HAL_HMIRead here
 
    /* The following function is used to send data to the UART output    */
    /* queue.  The function receives a pointer to a buffer that will     */
    /* contains the data to send and the length of the data.             */
+//TODO: delete
 void HAL_ConsoleWrite(unsigned int Length, char *Buffer);
 
    /* This function is called to get the system tick count.             */

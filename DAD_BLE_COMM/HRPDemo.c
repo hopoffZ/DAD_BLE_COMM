@@ -5488,13 +5488,13 @@ int InitializeApplication(HCI_DriverInformation_t *HCI_DriverInformation, BTPS_I
                   MaxBaudRate = (DWord_t)(HCI_DriverInformation->DriverInformation.COMMDriverInformation.BaudRate);
 
                   /* Set up the Selection Interface.                    */
-                  UserInterface();
+                  //UserInterface();
 
                   /* Display a list of available commands.              */
-                  DisplayHelp(NULL);
+                  //DisplayHelp(NULL);
 
                   /* Display the first command prompt.                  */
-                  DisplayPrompt();
+                  //DisplayPrompt();
 
                   /* Return success to the caller.                      */
                   ret_val = (int)BluetoothStackID;

@@ -1479,7 +1479,7 @@ BTPSAPI_DECLARATION int BTPSAPI HCI_Version_Supported(unsigned int BluetoothStac
    /* * NOTE * The final parameter to this function should be a contant */
    /*          from HCITypes.h for the supported HCI Commands (i.e.     */
    /*          of the format HCI_SUPPORTED_COMMAND_xxx_BIT_NUMBER, where*/
-   /*          "xxx" varies depending upon the command being tested).   */
+   /*          "   */
 BTPSAPI_DECLARATION int BTPSAPI HCI_Command_Supported(unsigned int BluetoothStackID, unsigned int SupportedCommandBitNumber);
 
 #ifdef INCLUDE_BLUETOOTH_API_PROTOTYPES

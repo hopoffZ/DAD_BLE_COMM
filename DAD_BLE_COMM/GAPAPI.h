@@ -233,7 +233,7 @@ typedef struct _tagGAP_Inquiry_With_RSSI_Entry_Event_Data_t
    /* individual entries can be accessed in a convienant, array-like,   */
    /* form.  The first member specifies the Extended Inquiry Response   */
    /* Data type (These types are of the form                            */
-   /* HCI_EXTENDED_INQUIRY_RESPONSE_DATA_TYPE_xxx, where 'xxx'          */
+   /* HCI_EXTENDED_INQUIRY_RESPONSE_DATA_TYPE_xxx, where ''          */
    /* is the individual Data type).  The second member specifies the    */
    /* length of data that is pointed to by the third member.  The       */
    /* third member points to the actual data for the individual entry   */
@@ -1067,7 +1067,7 @@ typedef enum
    /* container structure so that individual entries can be accessed in */
    /* a convenient, array-like, form.  The first member specifies the   */
    /* Advertising Data type (These types are of the form                */
-   /* HCI_LE_ADVERTISING_REPORT_DATA_TYPE_xxx where 'xxx' is the        */
+   /* HCI_LE_ADVERTISING_REPORT_DATA_TYPE_xxx where '        */
    /* individual Data type).  The second member specifies the length of */
    /* data that is pointed to by the third member.  The third member    */
    /* points to the actual data for the individual entry (length is     */

@@ -39,88 +39,35 @@ static char Input[MAX_COMMAND_LENGTH + 2];
    /* Local/Static Functions                                            */
    /*********************************************************************/
 
-static void ProcessCharactersTask(void *UserParameter);
+static void ProcessInputTask(void *UserParameter);
 static void IdleTask(void *UserParameter);
 static void ToggleLEDTask(void *UserParameter);
 static void BTPSAPI HCI_Sleep_Callback(Boolean_t _SleepAllowed, unsigned long CallbackParameter);
 static void PollErrorFlags(void);
+static void IdleTask_Sender(void *UserParameter);
+static void IdleTask_Receiver(void *UserParameter);
 
-   /* The following function is responsible for retrieving commands from*/
-   /* the user console.  NEEDS DELETING                                 */
-static void ProcessCharactersTask(void *UserParameter)
+   /* The following function is responsible for retrieving commands from     */
+   /* the user console.  TODO update this to take data from SPE or HMI input */
+static void ProcessInputTask(void *UserParameter)
 {
    char      Char;
-   Boolean_t CompleteLine;
+   Boolean_t systemBusy;
+   unsigned int raw_data; //8 byte, 64 bit raw data holder TODO: figure out why setting this to 8 bytes breaks it
 
-   /* Initialize the variable indicating a complete line has been parsed*/
-   /* to false.                                                         */
-   CompleteLine = FALSE;
+   /* Initialize the variable indicating the system is busy to false    */
+   systemBusy = FALSE;
 
    /* Attempt to read data from the console.                            */
-   while((!CompleteLine) && (HAL_ConsoleRead(1, &Char)))
+   while((!systemBusy) && (HAL_ConsoleRead(1, &Char))) //TODO swap HAL_ConsoleRead for SPE/HMI equivalent
    {
-      switch(Char)
-      {
-         case '\r':
-         case '\n':
-            if(InputIndex > 0)
-            {
-               /* We have received an end of line character, set the    */
-               /* complete line variable to true.                       */
-               CompleteLine = TRUE;
-            }
-            else
-            {
-               /* The user pressed 'Enter' without typing a command,    */
-               /* display the application's prompt.                     */
-               //DisplayPrompt();
-            }
-            break;
-         case 0x08:
-            /* Backspace has been pressed, so now decrement the number  */
-            /* of bytes in the buffer (if there are bytes in the        */
-            /* buffer).                                                 */
-            if(InputIndex)
-            {
-               InputIndex--;
-               HAL_ConsoleWrite(3, "\b \b");
-            }
-            break;
-         default:
-            /* Accept any other printable characters.                   */
-            if((Char >= ' ') && (Char <= '~'))
-            {
-               /* Add the Data Byte to the Input Buffer, and make sure  */
-               /* that we do not overwrite the Input Buffer.            */
-               Input[InputIndex++] = Char;
-               HAL_ConsoleWrite(1, &Char);
+	   if (SENDER) {
 
-               /* Check to see if we have reached the end of the buffer.*/
-               if(InputIndex >= MAX_COMMAND_LENGTH)
-               {
-                  /* We have received all of the data that we can       */
-                  /* handle, set the complete line variable to true.    */
-                  CompleteLine = TRUE;
-               }
-            }
-            break;
-      }
-   }
+	   }
+	   else if (RECEIVER) {
 
-   /* Check if we have received a complete line.                        */
-   if(CompleteLine)
-   {
-      /* We have received a complete line, null-terminate the string,   */
-      /* adding an extra null character for interopability with the     */
-      /* command line processing performed in the application.          */
-      Input[InputIndex]   = '\0';
-      Input[InputIndex+1] = '\0';
-
-      /* Set the input index back to the start of the buffer.           */
-      InputIndex = 0;
-
-      /* Process the command line.                                      */
-      //ProcessCommandLine(Input);
+	   }
+	   Char = raw_data;
    }
 }
 
@@ -134,7 +81,7 @@ static void IdleTask(void *UserParameter)
    {
       /* The stack is idle and we are in HCILL sleep, attempt to suspend*/
       /* the UART.                                                      */
-      if(!HCITR_COMSuspend())
+      if(!HCITR_COMSuspend()) //this needs to change, as we won't be using the COM port
       {
          /* Check to see if a wakeup is in progress (by the controller).*/
          /* If so we will disable sleep mode so that we complete the    */
@@ -142,9 +89,11 @@ static void IdleTask(void *UserParameter)
          if(!HCITR_COMSuspended())
             SleepAllowed = FALSE;
 
-         /* Go ahead and process any characters we may have received on */
-         /* the console UART.                                           */
-         ProcessCharactersTask(NULL);
+         /* "Go ahead and process any characters we may have received   */
+         /* on the console UART." DEPRECATED                            */
+         /* ProcessInputTask checks for the sender/receiver status of   */
+         /* device and based on the result checks for SPE / HMI input   */
+         ProcessInputTask(NULL);
       }
       else
       {
@@ -213,6 +162,8 @@ void main(void)
 
 	//Two options: device can be a sender, or a receiver.  This is determined by the existence of certain
 	//external connections to the MSP432, I.E. HMI, removable storage, SPE, etc.
+
+
 	int                           Result;
 	BTPS_Initialization_t         BTPS_Initialization;
 	HCI_DriverInformation_t       HCI_DriverInformation;
@@ -245,14 +196,14 @@ void main(void)
 				 Result = HCI_Reconfigure_Driver(BluetoothStackID, FALSE, &DriverReconfigureData);
 				 if(Result > 0)
 				 {
-					Display(("Sleep is allowed.\r\n"));
-						/* Flag that it is safe to go into sleep mode.              */
+					//Display(("Sleep is allowed.\r\n"));
+					/* Flag that it is safe to go into sleep mode.              */
 					SleepAllowed = TRUE;
 				 }
 			  }
 			  /* We need to execute Add a function to process the command line  */
 			  /* to the BTPS Scheduler.                                         */
-			  if(BTPS_AddFunctionToScheduler(ProcessCharactersTask, NULL, 100))
+			  if(BTPS_AddFunctionToScheduler(ProcessInputTask, NULL, 100))
 			  {
 				  /* Add the idle task (which determines if LPM3 may be entered) */
 				  /* to the scheduler.                                           */

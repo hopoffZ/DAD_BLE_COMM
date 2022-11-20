@@ -527,6 +527,9 @@ int BTPSAPI HCITR_COMSuspend(void)
    /* The following function is used to determine if the COM port is    */
    /* currently suspended.  This function returns TRUE if the COM port  */
    /* is suspended or FALSE otherwise.                                  */
+   /* TODO:: Because we won't be using the COM port, this will need to  */
+   /* change to an equivalent function with touch input (receiver) or   */
+   /* SPE (sender)														*/
 Boolean_t BTPSAPI HCITR_COMSuspended(void)
 {
    return((Boolean_t)((UartContext.StatusFlags & STATUS_FLAG_UART_SUSPENDED) ? TRUE : FALSE));

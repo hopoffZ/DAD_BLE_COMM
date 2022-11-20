@@ -196,6 +196,7 @@ static void ConfigureClocks(void)
 
    /* The following function configures the microcontroller's           */
    /* peripherals and GPIOs to their default states.                    */
+//TODO: update configurehardware to set up HMI and SPE, also using these to determine whether board is sender or receiver
 void HAL_ConfigureHardware(void)
 {
    /* Hold the Watchdog Timer.                                          */
