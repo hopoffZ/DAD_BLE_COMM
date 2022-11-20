@@ -213,6 +213,7 @@ void main(void)
 					SleepAllowed = TRUE;
 				 }
 			  }
+
 			  /* We need to execute Add a function to process the command line  */
 			  /* to the BTPS Scheduler.                                         */
 			  if(BTPS_AddFunctionToScheduler(ProcessInputTask, NULL, 100))
