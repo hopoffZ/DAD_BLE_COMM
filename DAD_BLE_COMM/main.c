@@ -73,6 +73,7 @@ static void ProcessInputTask(void *UserParameter)
 
    /* The following function is responsible for checking the idle state */
    /* and possibly entering LPM3 mode.                                  */
+//TODO: remove basically all of this and replace with an if/else for sender/receiver and call respective functions
 static void IdleTask(void *UserParameter)
 {
    /* If the stack is idle and we are in HCILL sleep, then we may enter */
@@ -109,6 +110,17 @@ static void IdleTask(void *UserParameter)
       PollErrorFlags();
    }
 }
+
+	/* checking idle state, sender (RSA) side */
+static void IdleTask_Sender(void *UserParameter) {
+
+}
+
+	/* checking idle state, receiver (handheld) side */
+static void IdleTask_Receiver(void *UserParameter) {
+
+}
+
 
    /* The following function is responsible for toggling the LED.       */
 static void ToggleLEDTask(void *UserParameter)
