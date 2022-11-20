@@ -62,10 +62,10 @@ static void ProcessInputTask(void *UserParameter)
    while((!systemBusy) && (HAL_ConsoleRead(1, &Char))) //TODO swap HAL_ConsoleRead for SPE/HMI equivalent
    {
 	   if (SENDER) {
-
+		   //TODO: grab SPE input
 	   }
 	   else if (RECEIVER) {
-
+		   //TODO: grab HMI input
 	   }
 	   Char = raw_data;
    }
