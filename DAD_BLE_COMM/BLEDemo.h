@@ -8,12 +8,14 @@
 /*                                                                            */
 /*   mm/dd/yy  F. Lastname    Description of Modification                     */
 /*   --------  -----------    ------------------------------------------------*/
-/*   05/28/12  Ryan Byrne     Initial creation.                               */
+/*   11/20/22  Alex Miller    Initial creation.                               */
 /******************************************************************************/
-#ifndef __HRPDEMO_H__
-#define __HRPDEMO_H__
+#ifndef __BLEDEMO_H__
+#define __BLEDEMO_H__
 
-//#include "HRSTypes.h"            /* Main SS1 HRS Types Header.                */
+
+
+
 
 #endif
 
