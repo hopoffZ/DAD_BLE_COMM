@@ -27,6 +27,6 @@ struct sensorType identify(); //pull sensorType of each sensor currently active
 
 struct Data graball(); //pull data from all Packagers and synthesize
 
-
+void send(Data d);
 
 #endif /* SENDER_H_ */
