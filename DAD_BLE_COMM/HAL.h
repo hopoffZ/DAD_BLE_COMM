@@ -57,7 +57,7 @@ void HAL_ConfigureHardware(void);
    /* The following function enables a UART and configures it to the    */
    /* specified baud rate.  Note that this function enables the UART Rx */
    /* interrupt, but it is up to the caller to enable the UART Tx       */
-   /* interrupt.                                                        */
+   /* interrupt. TODO: adjust this to take UART from HMI(need will help)*/
 void HAL_EnableUART(uint32_t ModuleInstance, uint32_t InterruptNumber, unsigned long BaudRate);
 
    /* The following function disables a UART.                           */

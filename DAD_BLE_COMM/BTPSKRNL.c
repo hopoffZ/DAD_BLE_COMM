@@ -876,7 +876,7 @@ int BTPSAPI BTPS_SprintF(char *Buffer, BTPSCONST char *Format, ...)
    /* the Size of each of the Slots.  This function returns a NON-NULL  */
    /* Mailbox Handle if the Mailbox is successfully created, or a NULL  */
    /* Mailbox Handle if the Mailbox was unable to be created.           */
-Mailbox_t BTPSAPI BTPS_CreateMailbox(unsigned int NumberSlots, unsigned int SlotSize)
+Mailbox_t BTPSAPI BTPS_CreateMailbox(unsigned int NumberSlots, unsigned int SlotSize) //TODO: link this to implementation
 {
    Mailbox_t        ret_val;
    MailboxHeader_t *MailboxHeader;

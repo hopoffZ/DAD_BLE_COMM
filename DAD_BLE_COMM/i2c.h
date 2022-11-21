@@ -3,6 +3,8 @@
  *    MSP432 DriverLib - v3_10_00_09 
  * -------------------------------------------
  *
+ * TODO: delete this file along with all other i2c and unnecessary communication protocol files
+ *
  * --COPYRIGHT--,BSD,BSD
  * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.

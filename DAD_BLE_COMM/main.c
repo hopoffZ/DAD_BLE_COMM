@@ -113,12 +113,12 @@ static void IdleTask(void *UserParameter)
 
 	/* checking idle state, sender (RSA) side */
 static void IdleTask_Sender(void *UserParameter) {
-
+	//TODO: implementation
 }
 
 	/* checking idle state, receiver (handheld) side */
 static void IdleTask_Receiver(void *UserParameter) {
-
+	//TODO: implementation
 }
 
 

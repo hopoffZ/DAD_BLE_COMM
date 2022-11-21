@@ -17,6 +17,6 @@
 
 #include "structures.h" //structures header file
 
-
+//TODO: structure for polling bluetooth communication and parsing out data
 
 #endif /* RECEIVER_H_ */
