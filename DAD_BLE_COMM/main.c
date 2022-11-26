@@ -44,30 +44,27 @@ static void IdleTask(void *UserParameter);
 static void ToggleLEDTask(void *UserParameter);
 static void BTPSAPI HCI_Sleep_Callback(Boolean_t _SleepAllowed, unsigned long CallbackParameter);
 static void PollErrorFlags(void);
-static void IdleTask_Sender(void *UserParameter);
-static void IdleTask_Receiver(void *UserParameter);
 
    /* The following function is responsible for retrieving commands from     */
    /* the user console.  TODO update this to take data from SPE or HMI input */
 static void ProcessInputTask(void *UserParameter)
 {
-   char      Char;
+   //char      Char;
    Boolean_t systemBusy;
-   unsigned int raw_data; //8 byte, 64 bit raw data holder TODO: figure out why setting this to 8 bytes breaks it
+   //unsigned int raw_data; //8 byte, 64 bit raw data holder TODO: figure out why setting this to 8 bytes breaks it
 
    /* Initialize the variable indicating the system is busy to false    */
    systemBusy = FALSE;
 
    /* Attempt to read data from the console.                            */
-   while((!systemBusy) && (HAL_ConsoleRead(1, &Char))) //TODO swap HAL_ConsoleRead for SPE/HMI equivalent
+   while(!systemBusy) // (HAL_ConsoleRead(1, &Char))) //TODO swap HAL_ConsoleRead for SPE/HMI equivalent
    {
 	   if (SENDER) {
-		   //TODO: grab SPE input
+		   //TODO: grab SPE input, send across BT
 	   }
 	   else if (RECEIVER) {
-		   //TODO: grab HMI input
+		   //TODO: grab HMI input, pass to functions from receiver.h
 	   }
-	   Char = raw_data;
    }
 }
 
@@ -109,16 +106,6 @@ static void IdleTask(void *UserParameter)
       /* Poll the error flags.                                          */
       PollErrorFlags();
    }
-}
-
-	/* checking idle state, sender (RSA) side */
-static void IdleTask_Sender(void *UserParameter) {
-	//TODO: implementation
-}
-
-	/* checking idle state, receiver (handheld) side */
-static void IdleTask_Receiver(void *UserParameter) {
-	//TODO: implementation
 }
 
 
@@ -232,11 +219,5 @@ void main(void)
 					  BTPS_ExecuteScheduler();
 				  }
 			  }
-	}
-	if (SENDER) {
-
-	}
-	else if (RECEIVER) {
-
 	}
 }
