@@ -3668,12 +3668,10 @@ static void BTPSAPI GAP_LE_Event_Callback(unsigned int BluetoothStackID, GAP_LE_
 {
    int                                           Result;
    BoardStr_t                                    BoardStr;
-   unsigned int                                  Index;
    DeviceInfo_t                                 *DeviceInfo;
    Long_Term_Key_t                               GeneratedLTK;
    GAP_LE_Security_Information_t                 GAP_LE_Security_Information;
    GAP_LE_Connection_Parameters_t                ConnectionParameters;
-   GAP_LE_Advertising_Report_Data_t             *DeviceEntryPtr;
    GAP_LE_Authentication_Event_Data_t           *Authentication_Event_Data;
    GAP_LE_Authentication_Response_Information_t  GAP_LE_Authentication_Response_Information;
 
@@ -4966,7 +4964,6 @@ int InitializeApplication(HCI_DriverInformation_t *HCI_DriverInformation, BTPS_I
 								  for(Index = 0; Index < GAP_LE_Event_Data_s.Event_Data.GAP_LE_Advertising_Report_Event_Data->Number_Device_Entries; Index++) {
 									  DeviceEntryPtr_s = &(GAP_LE_Event_Data_s.Event_Data.GAP_LE_Advertising_Report_Event_Data->Advertising_Data[Index]); //ptr to data for Index'th entry in the event report
 									  //TODO: identify BT devices, find any CC2564MODA modules, connect IFF the device is a MODA module (temporary solution)
-									  Boolean_t deviceIsMODA = FALSE; //TODO: implement this ^^^^^
 									  if (DeviceEntryPtr_s->Advertising_Report_Type == rtConnectableUndirected) { //this is receiver
 										  BD_ADDRToStr(DeviceEntryPtr_s->BD_ADDR, BoardStr);
 										  temp.Params[0].strParam = BoardStr;
