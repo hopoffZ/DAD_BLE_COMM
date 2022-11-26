@@ -422,7 +422,6 @@ static void FreeDeviceInfoEntryMemory(DeviceInfo_t *EntryToFree);
 static void FreeDeviceInfoList(DeviceInfo_t **ListHead);
 
    /* Command line functions                                            */
-static void UserInterface(void);
 static Boolean_t CommandLineInterpreter(char *Command);
 static unsigned long StringToUnsignedInteger(char *StringInteger);
 static char *StringParser(char *String);
@@ -1152,6 +1151,7 @@ static void DisplayUsage(char *UsageString)
    /* Displays a function error message.                                */
 static void DisplayFunctionError(char *Function,int Status)
 {
+	//TODO: Change this to a) display error states to HMI and b) store error logs to removable media storage
    Display(("Error - %s returned %d.\r\n", Function, Status));
 }
 
@@ -3661,7 +3661,11 @@ static void BTPSAPI GAP_LE_Event_Callback(unsigned int BluetoothStackID, GAP_LE_
    {
       switch(GAP_LE_Event_Data->Event_Data_Type)
       {
-         case etLE_Advertising_Report:
+         case etLE_Advertising_Report: //TODO: This is the case that the scan will call at the end.  This needs to be updated in several ways, listed below
+        	 /*
+        	  * 1. remove command line printing
+        	  * 2. connect output of report somehow back to initializeapplication
+        	  */
             Display(("\r\netLE_Advertising_Report with size %d.\r\n",(int)GAP_LE_Event_Data->Event_Data_Size));
             Display(("  %d Responses.\r\n",GAP_LE_Event_Data->Event_Data.GAP_LE_Advertising_Report_Event_Data->Number_Device_Entries));
 
@@ -4886,8 +4890,81 @@ int InitializeApplication(HCI_DriverInformation_t *HCI_DriverInformation, BTPS_I
                   /* Display the first command prompt.                  */
                   //DisplayPrompt();
 
-                  /* Return success to the caller.                      */
-                  ret_val = (int)BluetoothStackID;
+                  //TODO: establish BLE connection
+//					TODO: **These commands are the commands that are used by the user interface of the demo that much of this code was sampled from.
+//							Here it serves the purpose of a list of functions used to establish and use a BLE connection.
+//                  /* Install the commands relevant for this UI.                        */
+//                  AddCommand("SETDISCOVERABILITYMODE", SetDiscoverabilityMode);
+//                  AddCommand("SETCONNECTABILITYMODE", SetConnectabilityMode);
+//                  AddCommand("SETPAIRABILITYMODE", SetPairabilityMode);
+//                  AddCommand("CHANGEPAIRINGPARAMETERS", ChangePairingParameters);
+//                  AddCommand("GETLOCALADDRESS", GetLocalAddress);
+//                  AddCommand("ADVERTISELE", AdvertiseLE);
+//                  AddCommand("STARTSCANNING", StartScanning);
+//                  AddCommand("STOPSCANNING", StopScanning);
+//                  AddCommand("CONNECTLE", ConnectLE);
+//                  AddCommand("DISCONNECTLE", DisconnectLE);
+//                  AddCommand("PAIRLE", PairLE);
+//                  AddCommand("SETBAUDRATE", SetBaudRate);
+//                  AddCommand("LEPASSKEYRESPONSE", LEPassKeyResponse);
+//                  AddCommand("QUERYENCRYPTIONMODE", LEQueryEncryption);
+//                  AddCommand("SETPASSKEY", LESetPasskey);
+//                  AddCommand("DISCOVERGAPS", DiscoverGAPS);
+//                  AddCommand("GETLOCALNAME", GetLocalName);
+//                  AddCommand("SETLOCALNAME", SetLocalName);
+//                  AddCommand("GETREMOTENAME", ReadRemoteName);
+//                  AddCommand("GETLOCALAPPEARANCE", GetLocalAppearance);
+//                  AddCommand("SETLOCALAPPEARANCE", SetLocalAppearance);
+//                  AddCommand("GETREMOTEAPPEARANCE", GetRemoteAppearance);
+//                  AddCommand("RESETENERGYEXPENDED", ResetEnergyExpended);
+//                  AddCommand("HELP", DisplayHelp);
+//                  AddCommand("QUERYMEMORY", QueryMemory);
+                  ParameterList_t temp;
+                  temp.NumberofParameters = 1;
+                  temp.Params[0].intParam = 2;
+                  BD_ADDR_t BD_ADDR;
+                  BoardStr_t BoardStr;
+                  ret_val = GAP_Query_Local_BD_ADDR(BluetoothStackID, &BD_ADDR);
+                  if (!ret_val) {
+                	  temp.NumberofParameters = 2;
+                	  temp.Params[0].intParam = 1;
+                	  temp.Params[0].strParam = "hello";
+                	  temp.Params[1].intParam = 1;
+                	  BD_ADDRToStr(BD_ADDR, BoardStr);
+                	  temp.Params[1].strParam = BoardStr;
+                	  ret_val = AdvertiseLE(&temp);
+                	  if (!ret_val) {
+                		  ret_val = StartScanning(&temp);
+                		  if (!ret_val) {
+                			  //TODO: get addresses from scan results (currently printed to console?) into connectLE's tempparam
+
+
+                			  ret_val = ConnectLE(&temp);
+                			  if (!ret_val) {
+
+                			  }
+                			  else
+                				  DisplayFunctionError("ConnectLE", ret_val);
+                		  }
+                		  else
+                			  DisplayFunctionError("StartScanning", ret_val);
+                	  }
+                	  else
+                		  DisplayFunctionError("AdvertiseLE", ret_val);
+                  }
+                  else
+                	  DisplayFunctionError("GAP_Query_Local_BD_ADDR", ret_val);
+
+                  if (!ret_val) {
+
+
+
+
+                	  /* Return success to the caller.                      */
+                	  ret_val = (int)BluetoothStackID;
+                  }
+                  else
+                	  DisplayFunctionError("SetDiscoverabilityMode", ret_val);
                }
                else
                   DisplayFunctionError("SetPairable", ret_val);

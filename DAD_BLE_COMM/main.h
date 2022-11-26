@@ -18,6 +18,7 @@
 #include "BTPSKRNL.h"            /* BTPS Kernel Prototypes/Constants.         */
 
    /* The following is used as a printf replacement.                    */
+//TODO: change this since we're not using console
 #define Display(_x)                                do { BTPS_OutputMessage _x; } while(0)
 
    /* Error Return Codes.                                               */
