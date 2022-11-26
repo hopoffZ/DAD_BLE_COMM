@@ -16,6 +16,7 @@
 #define __HRSTYPESH__
 
 #include "BTTypes.h"            /* Bluetooth Type Definitions.                */
+//TODO: Gut this and replace with DAD functions
 
    /* The following define the defined HRS Error Codes that may be sent */
    /* in a GATT Error Response.                                         */
