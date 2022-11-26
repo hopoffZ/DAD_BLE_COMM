@@ -29,7 +29,7 @@
                                                          /* are supported by  */
                                                          /* this application. */
 
-#define receiver 1 //TODO: THIS NEEDS BETTER IMPLEMENTATION, RIGHT NOW MANUALLY 1 = RECEIVER 0 = SENDER
+#define receiver 0 //TODO: THIS NEEDS BETTER IMPLEMENTATION, RIGHT NOW MANUALLY 1 = RECEIVER 0 = SENDER
 
 #define MAX_NUM_OF_PARAMETERS                       (5)  /* Denotes the max   */
                                                          /* number of         */
@@ -4976,7 +4976,13 @@ int InitializeApplication(HCI_DriverInformation_t *HCI_DriverInformation, BTPS_I
 											  ret_val = GetRemoteAppearance(&temp);
 											  if (!ret_val) {
 												  if (DeviceInfo_s->GAPSClientInfo.DeviceAppearanceHandle == GAP_DEVICE_APPEARANCE_VALUE_S23_DAD_RSA) {
-													  //TODO: successful connection established, complete pairing and request transmission of data
+													  ret_val = PairLE(&temp);
+													  if (!ret_val) {
+														  /* Return success to the caller. */
+														  ret_val = (int)BluetoothStackID;
+													  }
+													  else
+														  DisplayFunctionError("PairLE", ret_val);
 												  }
 												  else {
 													  ret_val = DisconnectLE(&temp);
@@ -5006,17 +5012,6 @@ int InitializeApplication(HCI_DriverInformation_t *HCI_DriverInformation, BTPS_I
 					  }
 					  else
 						  DisplayFunctionError("GAP_Query_Local_BD_ADDR", ret_val);
-
-					  if (!ret_val) {
-
-
-
-
-						  /* Return success to the caller.                      */
-						  ret_val = (int)BluetoothStackID;
-					  }
-					  else
-						  DisplayFunctionError("SetDiscoverabilityMode", ret_val);
 				  }
                   else
                 	  DisplayFunctionError("SetLocalAppearance", ret_val);

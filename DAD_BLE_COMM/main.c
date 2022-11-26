@@ -191,8 +191,8 @@ void main(void)
 	BTPS_Initialization.GetTickCountCallback  = HAL_GetTickCount;
 	BTPS_Initialization.MessageOutputCallback = HAL_ConsoleWrite;
 	/* Initialize the application.                                       */
-	if((Result = InitializeApplication(&HCI_DriverInformation, &BTPS_Initialization)) > 0)
-	{
+	if((Result = InitializeApplication(&HCI_DriverInformation, &BTPS_Initialization)) > 0) //after this function, the device should be connected to a device
+	{ //TODO: as of right now, if the device does not successfully connect on the first call of initializeapplication, the program will fail and require restart. fix this
 		/* Save the Bluetooth Stack ID.                                   */
 		BluetoothStackID = (unsigned int)Result;
 		/* Register a sleep mode callback if we are using HCILL Mode.     */
