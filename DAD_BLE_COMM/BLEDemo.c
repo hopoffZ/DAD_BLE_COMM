@@ -3641,7 +3641,7 @@ static int GetRemoteAppearance(ParameterList_t *TempParam)
    /*          Callback.  A Deadlock WILL occur because NO Bluetooth    */
    /*          Callbacks will be issued while this function is currently*/
    /*          outstanding.                                             */
-static void BTPSAPI GAP_LE_Event_Callback(unsigned int BluetoothStackID, GAP_LE_Event_Data_t *GAP_LE_Event_Data, unsigned long CallbackParameter)
+static void BTPSAPI GAP_LE_Event_Callback(unsigned int BluetoothStackID, GAP_LE_Event_Data_t *GAP_LE_Event_Data, unsigned long CallbackParameter) //TODO: update this to a) no longer send console output and b) use LED indicator to indicate successful BT connection
 {
    int                                           Result;
    BoardStr_t                                    BoardStr;
