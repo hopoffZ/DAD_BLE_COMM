@@ -21,6 +21,8 @@
 #include "BTPSKRNL.h"            /* BTPS Kernel Header.                       */
 #include "SS1BTVS.h"             /* Vendor Specific Prototypes/Constants.     */
 
+//TODO: There are a lot of unused functions in here currently.  Implementation here is already done, functions just need to be linked to each other.  Check TODO list for how to finish this.
+
 #define MAX_SUPPORTED_COMMANDS                     (33)  /* Denotes the       */
                                                          /* maximum number of */
                                                          /* User Commands that*/
