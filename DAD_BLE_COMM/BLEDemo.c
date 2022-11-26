@@ -274,6 +274,10 @@ static unsigned int        BluetoothStackID;        /* Variable which holds the 
                                                     /* of the opened Bluetooth Protocol*/
                                                     /* Stack.                          */
 
+static GAP_LE_Event_Data_t GAP_LE_Event_Data_s;		/* Holds reports from BLE scans    */
+
+static GAP_LE_Advertising_Report_Data_t *DeviceEntryPtr_s; /* Holds advertising report data */
+
 static BD_ADDR_t           ConnectionBD_ADDR;       /* Holds the BD_ADDR of the        */
                                                     /* currently connected device.     */
 
@@ -3666,6 +3670,8 @@ static void BTPSAPI GAP_LE_Event_Callback(unsigned int BluetoothStackID, GAP_LE_
         	  * 1. remove command line printing
         	  * 2. connect output of report somehow back to initializeapplication
         	  */
+        	GAP_LE_Event_Data_s = GAP_LE_Event_Data;
+
             Display(("\r\netLE_Advertising_Report with size %d.\r\n",(int)GAP_LE_Event_Data->Event_Data_Size));
             Display(("  %d Responses.\r\n",GAP_LE_Event_Data->Event_Data.GAP_LE_Advertising_Report_Event_Data->Number_Device_Entries));
 
@@ -4937,8 +4943,11 @@ int InitializeApplication(HCI_DriverInformation_t *HCI_DriverInformation, BTPS_I
                 		  ret_val = StartScanning(&temp);
                 		  if (!ret_val) {
                 			  //TODO: get addresses from scan results (currently printed to console?) into connectLE's tempparam
-
-
+                			  int Index;
+                			  for(Index = 0; Index < GAP_LE_Event_Data_s->Event_Data.GAP_LE_Advertising_Report_Event_Data->Number_Device_Entries; Index++) {
+                				  DeviceEntryPtr_s = &(GAP_LE_Event_Data_s->Event_Data.GAP_LE_Advertising_Report_Event_Data->Advertising_Data[Index]); //ptr to data for Index'th entry in the event report
+                				  //TODO: identify BT devices, find any CC2564MODA modules, connect IFF the device is a MODA module (temporary solution)
+                			  }
                 			  ret_val = ConnectLE(&temp);
                 			  if (!ret_val) {
 
