@@ -165,6 +165,8 @@
    /* The following define the value GAP Device Appearence Values.      */
 #define GAP_DEVICE_APPEARENCE_VALUE_UNKNOWN                                                        0
 #define GAP_DEVICE_APPEARENCE_VALUE_GENERIC_PHONE                                                  64
+#define GAP_DEVICE_APPEARANCE_VALUE_S23_DAD_HANDHELD											   65
+#define GAP_DEVICE_APPEARANCE_VALUE_S23_DAD_RSA													   66
 #define GAP_DEVICE_APPEARENCE_VALUE_GENERIC_COMPUTER                                               128
 #define GAP_DEVICE_APPEARENCE_VALUE_GENERIC_WATCH                                                  192
 #define GAP_DEVICE_APPEARENCE_VALUE_SPORTS_WATCH                                                   193
@@ -212,6 +214,8 @@
 #define GAP_DEVICE_APPEARENCE_VALUE_OUTDOOR_SPORTS_ACTIVITY_LOCATION_AND_NAVIGATION_DISPLAY_DEVICE 5186
 #define GAP_DEVICE_APPEARENCE_VALUE_OUTDOOR_SPORTS_ACTIVITY_LOCATION_POD                           5187
 #define GAP_DEVICE_APPEARENCE_VALUE_OUTDOOR_SPORTS_ACTIVITY_LOCATION_AND_NAVIGATION_POD            5188
+//TODO: low priority: prune definitions
+
 
    /* The following structure represents the format of the GAP          */
    /* Peripheral Preferred Connection Parameters characteristic.        */

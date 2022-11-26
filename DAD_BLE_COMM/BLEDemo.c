@@ -108,7 +108,7 @@
                                                          /* Test Mode.        */
 
    /* Determine the Name we will use for this compilation.              */
-#define LE_APP_DEMO_NAME                        "HRPDemo"
+#define LE_APP_DEMO_NAME                        "DADDemo"
    /* The following MACRO is used to convert an ASCII character into the*/
    /* equivalent decimal value.  The MACRO converts lower case          */
    /* characters to upper case before the conversion.                   */
@@ -278,7 +278,7 @@ static unsigned int        BluetoothStackID;        /* Variable which holds the 
 
 static GAP_LE_Event_Data_t GAP_LE_Event_Data_s;		/* Holds reports from BLE scans    */
 
-static GAP_LE_Advertising_Report_Data_t *DeviceEntryPtr_s; /* Holds advertising report data */
+
 
 static BD_ADDR_t           ConnectionBD_ADDR;       /* Holds the BD_ADDR of the        */
                                                     /* currently connected device.     */
@@ -313,6 +313,8 @@ static DWord_t             MaxBaudRate;             /* Variable stores the maxim
                                                     /* HCI UART baud rate supported by */
                                                     /* this platform.                  */
 
+static DeviceInfo_t		   *DeviceInfo_s;				/* Variable stores device info of current connected device. */
+
    /* The following is used to map from ATT Error Codes to a printable  */
    /* string.                                                           */
 static char *ErrorCodeStr[] =
@@ -342,8 +344,10 @@ static char *ErrorCodeStr[] =
    /* The following array is used to map Device Appearance Values to    */
    /* strings.                                                          */
 static GAPS_Device_Appearance_Mapping_t AppearanceMappings[] =
-{
+{ //TODO: low priority: prune to reduce file size
    {GAP_DEVICE_APPEARENCE_VALUE_UNKNOWN,                        "Unknown"},
+   {GAP_DEVICE_APPEARANCE_VALUE_S23_DAD_RSA,					"NAVAIR Data Acquisition Device Remote Sensor Array"},
+   {GAP_DEVICE_APPEARANCE_VALUE_S23_DAD_HANDHELD,				"NAVAIR Data Acquisition Device Handheld Device"},
    {GAP_DEVICE_APPEARENCE_VALUE_GENERIC_PHONE,                  "Generic Phone"},
    {GAP_DEVICE_APPEARENCE_VALUE_GENERIC_COMPUTER,               "Generic Computer"},
    {GAP_DEVICE_APPEARENCE_VALUE_GENERIC_WATCH,                  "Generic Watch"},
@@ -1345,7 +1349,12 @@ static int OpenStack(HCI_DriverInformation_t *HCI_DriverInformation, BTPS_Initia
 
                   /* Set the GAP Device Name and Device Appearance.     */
                   GAPS_Set_Device_Name(BluetoothStackID, GAPSInstanceID, LE_APP_DEMO_NAME);
-                  GAPS_Set_Device_Appearance(BluetoothStackID, GAPSInstanceID, GAP_DEVICE_APPEARENCE_VALUE_GENERIC_COMPUTER);
+                  if (receiver) {
+                	  GAPS_Set_Device_Appearance(BluetoothStackID, GAPSInstanceID, GAP_DEVICE_APPEARANCE_VALUE_S23_DAD_HANDHELD);
+                  }
+                  else
+                	  GAPS_Set_Device_Appearance(BluetoothStackID, GAPSInstanceID, GAP_DEVICE_APPEARANCE_VALUE_S23_DAD_RSA);
+
 
                   /* Initialize the DIS Service.                        */
                   Result = DIS_Initialize_Service(BluetoothStackID, &ServiceID);
@@ -1520,7 +1529,12 @@ static int SetConnect(void)
       /* * NOTE * Connectability is only an applicable when advertising */
       /*          so we will just save the default connectability for   */
       /*          the next time we enable advertising.                  */
-      LE_Parameters.ConnectableMode = lcmConnectable;
+	  /* outdated ^; if device is receiver, set connectable, else, direct connectable */
+      if (receiver) {
+    	  LE_Parameters.ConnectableMode = lcmConnectable;
+      }
+      else
+    	  LE_Parameters.ConnectableMode = lcmDirectConnectable;
    }
    else
    {
@@ -2379,7 +2393,7 @@ static int SetConnectabilityMode(ParameterList_t *TempParam)
    {
       /* Make sure that all of the parameters required for this function*/
       /* appear to be at least semi-valid.                              */
-      if((TempParam) && (TempParam->NumberofParameters >= 1) && (TempParam->Params[0].intParam >= 0) && (TempParam->Params[0].intParam <= 1))
+      if((TempParam) && (TempParam->NumberofParameters >= 1) && (TempParam->Params[0].intParam >= 0) && (TempParam->Params[0].intParam <= 2))
       {
          /* Parameters appear to be valid, map the specified parameters */
          /* into the API specific parameters.                           */
@@ -2388,8 +2402,10 @@ static int SetConnectabilityMode(ParameterList_t *TempParam)
          /*          it is not connectable.                             */
          if(TempParam->Params[0].intParam == 0)
             LE_Parameters.ConnectableMode = lcmNonConnectable;
-         else
+         else if (TempParam->Params[0].intParam == 1)
             LE_Parameters.ConnectableMode = lcmConnectable;
+         else if (TempParam->Params[0].intParam == 2)
+        	LE_Parameters.ConnectableMode = lcmDirectConnectable;
 
          /* The Mode was changed successfully.                          */
          Display(("Connectability Mode: %s.\r\n", (LE_Parameters.ConnectableMode == lcmNonConnectable)?"Non Connectable":"Connectable"));
@@ -2903,7 +2919,7 @@ static int AdvertiseLE(ParameterList_t *TempParam)
                        {
                             /* Convert the parameter to a Bluetooth     */
                             /* Device Address.                          */
-                                StrToBD_ADDR(TempParam->Params[2].strParam, &BD_ADDR);
+                            StrToBD_ADDR(TempParam->Params[2].strParam, &BD_ADDR);
                        }
                        else
                            ret_val = INVALID_PARAMETERS_ERROR;
@@ -2931,11 +2947,11 @@ static int AdvertiseLE(ParameterList_t *TempParam)
                        if(LE_Parameters.DiscoverabilityMode == dmLimitedDiscoverableMode)
                           Advertisement_Data_Buffer.AdvertisingData.Advertising_Data[2] = HCI_LE_ADVERTISING_FLAGS_LIMITED_DISCOVERABLE_MODE_FLAGS_BIT_MASK;
                     }
-
-                    if(HRSInstanceID)
+                    /* If this device is RSA, advertise DAD service */
+                    if(TRUE) //TODO: change this to something DAD specific instead of heart rate stuff from demo
                     {
-                       /* Advertise the Health Thermometer Server (1    */
-                       /* byte type and 2 bytes UUID.                   */
+                       /* Advertise DAD service (1    */
+                       /* byte type and 2 bytes UUID. */
                        Advertisement_Data_Buffer.AdvertisingData.Advertising_Data[3] = 3;
                        Advertisement_Data_Buffer.AdvertisingData.Advertising_Data[4] = HCI_LE_ADVERTISING_REPORT_DATA_TYPE_16_BIT_SERVICE_UUID_COMPLETE;
                        HRS_ASSIGN_HRS_SERVICE_UUID_16(&(Advertisement_Data_Buffer.AdvertisingData.Advertising_Data[5]));
@@ -2973,14 +2989,11 @@ static int AdvertiseLE(ParameterList_t *TempParam)
                           AdvertisingParameters.Advertising_Interval_Max  = 200;
 
                           /* Configure the Connectability Parameters.   */
-                          /* * NOTE * Since we do not ever put ourselves*/
-                          /*          to be direct connectable then we  */
-                          /*          will set the DirectAddress to all */
-                          /*          0s.                               */
+
                           ConnectabilityParameters.Connectability_Mode   = LE_Parameters.ConnectableMode;
                           ConnectabilityParameters.Own_Address_Type      = OwnAddressType;
                           ConnectabilityParameters.Direct_Address_Type   = latPublic;
-                          ASSIGN_BD_ADDR(ConnectabilityParameters.Direct_Address, 0, 0, 0, 0, 0, 0);
+                          ASSIGN_BD_ADDR(ConnectabilityParameters.Direct_Address, BD_ADDR.BD_ADDR5, BD_ADDR.BD_ADDR4, BD_ADDR.BD_ADDR3, BD_ADDR.BD_ADDR2, BD_ADDR.BD_ADDR1, BD_ADDR.BD_ADDR0);
 
                          /* If its a Random Address if So set the Random*/
                          /* address first                               */
@@ -3510,6 +3523,8 @@ static int GetLocalAppearance(ParameterList_t *TempParam)
    /* The following function is responsible for setting the Local Device*/
    /* Appearance value.  This function will return zero on successful   */
    /* execution and a negative value on errors.                         */
+
+//TODO: update, remove console printing, insert DAD-specific local appearance values.
 static int SetLocalAppearance(ParameterList_t *TempParam)
 {
    int    ret_val;
@@ -3583,7 +3598,7 @@ static int GetRemoteAppearance(ParameterList_t *TempParam)
             ret_val = GATT_Read_Value_Request(BluetoothStackID, ConnectionID, DeviceInfo->GAPSClientInfo.DeviceAppearanceHandle, GATT_ClientEventCallback_GAPS, (unsigned long)DeviceInfo->GAPSClientInfo.DeviceAppearanceHandle);
             if(ret_val > 0)
             {
-               Display(("Attempting to read Remote Device Appearance.\r\n"));
+               DeviceInfo_s = DeviceInfo;
 
                ret_val = 0;
             }
@@ -3672,52 +3687,52 @@ static void BTPSAPI GAP_LE_Event_Callback(unsigned int BluetoothStackID, GAP_LE_
         	  * 1. remove command line printing
         	  * 2. connect output of report somehow back to initializeapplication
         	  */
-        	GAP_LE_Event_Data_s = GAP_LE_Event_Data;
+        	GAP_LE_Event_Data_s = *GAP_LE_Event_Data;
 
-            Display(("\r\netLE_Advertising_Report with size %d.\r\n",(int)GAP_LE_Event_Data->Event_Data_Size));
-            Display(("  %d Responses.\r\n",GAP_LE_Event_Data->Event_Data.GAP_LE_Advertising_Report_Event_Data->Number_Device_Entries));
+//            Display(("\r\netLE_Advertising_Report with size %d.\r\n",(int)GAP_LE_Event_Data->Event_Data_Size));
+//            Display(("  %d Responses.\r\n",GAP_LE_Event_Data->Event_Data.GAP_LE_Advertising_Report_Event_Data->Number_Device_Entries));
 
-            for(Index = 0; Index < GAP_LE_Event_Data->Event_Data.GAP_LE_Advertising_Report_Event_Data->Number_Device_Entries; Index++)
-            {
-               DeviceEntryPtr = &(GAP_LE_Event_Data->Event_Data.GAP_LE_Advertising_Report_Event_Data->Advertising_Data[Index]);
+//            for(Index = 0; Index < GAP_LE_Event_Data->Event_Data.GAP_LE_Advertising_Report_Event_Data->Number_Device_Entries; Index++)
+//            {
+//               DeviceEntryPtr = &(GAP_LE_Event_Data->Event_Data.GAP_LE_Advertising_Report_Event_Data->Advertising_Data[Index]);
 
-               /* Display the packet type for the device                */
-               switch(DeviceEntryPtr->Advertising_Report_Type)
-               {
-                  case rtConnectableUndirected:
-                     Display(("  Advertising Type: %s.\r\n", "rtConnectableUndirected"));
-                     break;
-                  case rtConnectableDirected:
-                     Display(("  Advertising Type: %s.\r\n", "rtConnectableDirected"));
-                     break;
-                  case rtScannableUndirected:
-                     Display(("  Advertising Type: %s.\r\n", "rtScannableUndirected"));
-                     break;
-                  case rtNonConnectableUndirected:
-                     Display(("  Advertising Type: %s.\r\n", "rtNonConnectableUndirected"));
-                     break;
-                  case rtScanResponse:
-                     Display(("  Advertising Type: %s.\r\n", "rtScanResponse"));
-                     break;
-               }
-
-               /* Display the Address Type.                             */
-               if(DeviceEntryPtr->Address_Type == latPublic)
-               {
-                  Display(("  Address Type: %s.\r\n","atPublic"));
-               }
-               else
-               {
-                  Display(("  Address Type: %s.\r\n","atRandom"));
-               }
-
-               /* Display the Device Address.                           */
-               Display(("  Address: 0x%02X%02X%02X%02X%02X%02X.\r\n", DeviceEntryPtr->BD_ADDR.BD_ADDR5, DeviceEntryPtr->BD_ADDR.BD_ADDR4, DeviceEntryPtr->BD_ADDR.BD_ADDR3, DeviceEntryPtr->BD_ADDR.BD_ADDR2, DeviceEntryPtr->BD_ADDR.BD_ADDR1, DeviceEntryPtr->BD_ADDR.BD_ADDR0));
-               Display(("  RSSI: %d.\r\n", (int)DeviceEntryPtr->RSSI));
-               Display(("  Data Length: %d.\r\n", DeviceEntryPtr->Raw_Report_Length));
-
-               DisplayAdvertisingData(&(DeviceEntryPtr->Advertising_Data));
-            }
+//               /* Display the packet type for the device                */
+//               switch(DeviceEntryPtr->Advertising_Report_Type)
+//               {
+//                  case rtConnectableUndirected:
+//                     Display(("  Advertising Type: %s.\r\n", "rtConnectableUndirected"));
+//                     break;
+//                  case rtConnectableDirected:
+//                     Display(("  Advertising Type: %s.\r\n", "rtConnectableDirected"));
+//                     break;
+//                  case rtScannableUndirected:
+//                     Display(("  Advertising Type: %s.\r\n", "rtScannableUndirected"));
+//                     break;
+//                  case rtNonConnectableUndirected:
+//                     Display(("  Advertising Type: %s.\r\n", "rtNonConnectableUndirected"));
+//                     break;
+//                  case rtScanResponse:
+//                     Display(("  Advertising Type: %s.\r\n", "rtScanResponse"));
+//                     break;
+//               }
+//
+//               /* Display the Address Type.                             */
+//               if(DeviceEntryPtr->Address_Type == latPublic)
+//               {
+//                  Display(("  Address Type: %s.\r\n","atPublic"));
+//               }
+//               else
+//               {
+//                  Display(("  Address Type: %s.\r\n","atRandom"));
+//               }
+//
+//               /* Display the Device Address.                           */
+//               Display(("  Address: 0x%02X%02X%02X%02X%02X%02X.\r\n", DeviceEntryPtr->BD_ADDR.BD_ADDR5, DeviceEntryPtr->BD_ADDR.BD_ADDR4, DeviceEntryPtr->BD_ADDR.BD_ADDR3, DeviceEntryPtr->BD_ADDR.BD_ADDR2, DeviceEntryPtr->BD_ADDR.BD_ADDR1, DeviceEntryPtr->BD_ADDR.BD_ADDR0));
+//               Display(("  RSSI: %d.\r\n", (int)DeviceEntryPtr->RSSI));
+//               Display(("  Data Length: %d.\r\n", DeviceEntryPtr->Raw_Report_Length));
+//
+//               DisplayAdvertisingData(&(DeviceEntryPtr->Advertising_Data));
+//          }
             break;
          case etLE_Connection_Complete:
             Display(("\r\netLE_Connection_Complete with size %d.\r\n",(int)GAP_LE_Event_Data->Event_Data_Size));
@@ -4859,6 +4874,8 @@ int InitializeApplication(HCI_DriverInformation_t *HCI_DriverInformation, BTPS_I
 {
    int ret_val = APPLICATION_ERROR_UNABLE_TO_OPEN_STACK;
 
+   GAP_LE_Advertising_Report_Data_t *DeviceEntryPtr_s; /* Holds advertising report data */
+
    /* Next, makes sure that the Driver Information passed appears to be */
    /* semi-valid.                                                       */
    if((HCI_DriverInformation) && (BTPS_Initialization))
@@ -4888,17 +4905,7 @@ int InitializeApplication(HCI_DriverInformation_t *HCI_DriverInformation, BTPS_I
                {
                   /* Save the maximum supported baud rate.              */
                   MaxBaudRate = (DWord_t)(HCI_DriverInformation->DriverInformation.COMMDriverInformation.BaudRate);
-
-                  /* Set up the Selection Interface.                    */
-                  //UserInterface();
-
-                  /* Display a list of available commands.              */
-                  //DisplayHelp(NULL);
-
-                  /* Display the first command prompt.                  */
-                  //DisplayPrompt();
-
-                  //TODO: establish BLE connection
+//					TODO: establish BLE connection
 //					TODO: **These commands are the commands that are used by the user interface of the demo that much of this code was sampled from.
 //							Here it serves the purpose of a list of functions used to establish and use a BLE connection.
 //                  /* Install the commands relevant for this UI.                        */
@@ -4928,63 +4935,91 @@ int InitializeApplication(HCI_DriverInformation_t *HCI_DriverInformation, BTPS_I
 //                  AddCommand("HELP", DisplayHelp);
 //                  AddCommand("QUERYMEMORY", QueryMemory);
                   ParameterList_t temp;
+                  /* Set local appearance (RSA = 2) (Handheld = 3) */
                   temp.NumberofParameters = 1;
-                  temp.Params[0].intParam = 2;
-                  BD_ADDR_t BD_ADDR;
-                  BoardStr_t BoardStr;
-                  ret_val = GAP_Query_Local_BD_ADDR(BluetoothStackID, &BD_ADDR);
-                  if (!ret_val) {
-                	  temp.NumberofParameters = 2;
-                	  temp.Params[0].intParam = 1;
-                	  temp.Params[0].strParam = "hello";
-                	  temp.Params[1].intParam = 1;
-                	  BD_ADDRToStr(BD_ADDR, BoardStr);
-                	  temp.Params[1].strParam = BoardStr;
-                	  ret_val = AdvertiseLE(&temp);
-                	  if (!ret_val && receiver) { //only attempt connection if this device is receiver module
-                		  ret_val = StartScanning(&temp);
-                		  if (!ret_val) {
-                			  int Index;
-                			  for(Index = 0; Index < GAP_LE_Event_Data_s->Event_Data.GAP_LE_Advertising_Report_Event_Data->Number_Device_Entries; Index++) {
-                				  DeviceEntryPtr_s = &(GAP_LE_Event_Data_s->Event_Data.GAP_LE_Advertising_Report_Event_Data->Advertising_Data[Index]); //ptr to data for Index'th entry in the event report
-                				  //TODO: identify BT devices, find any CC2564MODA modules, connect IFF the device is a MODA module (temporary solution)
-                				  bool deviceIsMODA = false; //TODO: implement this ^^^^^
-                				  if (deviceIsMODA) {
-                					  if (DeviceEntryPtr_s->Advertising_Report_Type == rtConnectableUndirected) { //this is receiver
-                						  BD_ADDRToStr(DeviceEntryPtr_s->BD_ADDR, BoardStr);
-                						  temp.Params[0].strParam = BoardStr;
-                						  temp.NumberofParameters = 1;
-                						  ret_val = ConnectLE(&temp);
-                						  if (!ret_val) {
-
-                						  }
-                						  else
-                							  DisplayFunctionError("ConnectLE", ret_val);
-                					  }
-                					  else
-                						  DisplayFunctionError("No RSA Modules Detected", ret_val);
-                				  }
-                			  }
-                		  }
-                		  else
-                			  DisplayFunctionError("StartScanning", ret_val);
-                	  }
-                	  else
-                		  DisplayFunctionError("AdvertiseLE", ret_val);
+                  if (receiver) {
+                	  temp.Params[0].intParam = 2;
+                	  ret_val = SetLocalAppearance(&temp);
                   }
-                  else
-                	  DisplayFunctionError("GAP_Query_Local_BD_ADDR", ret_val);
-
-                  if (!ret_val) {
-
-
-
-
-                	  /* Return success to the caller.                      */
-                	  ret_val = (int)BluetoothStackID;
+                  else {
+                	  temp.Params[0].intParam = 3;
+                	  ret_val = SetLocalAppearance(&temp);
                   }
+                  if (!ret_val) {
+					  temp.NumberofParameters = 1;
+					  temp.Params[0].intParam = 2;
+					  BD_ADDR_t BD_ADDR;
+					  BoardStr_t BoardStr;
+					  ret_val = GAP_Query_Local_BD_ADDR(BluetoothStackID, &BD_ADDR);
+					  if (!ret_val) {
+						  temp.NumberofParameters = 2;
+						  temp.Params[0].intParam = 1;
+						  temp.Params[0].strParam = "hello";
+						  temp.Params[1].intParam = 1;
+						  BD_ADDRToStr(BD_ADDR, BoardStr);
+						  temp.Params[1].strParam = BoardStr;
+						  ret_val = AdvertiseLE(&temp);
+						  if (!ret_val && receiver) { //only attempt connection if this device is receiver module
+							  ret_val = StartScanning(&temp);
+							  if (!ret_val) {
+								  int Index;
+								  for(Index = 0; Index < GAP_LE_Event_Data_s.Event_Data.GAP_LE_Advertising_Report_Event_Data->Number_Device_Entries; Index++) {
+									  DeviceEntryPtr_s = &(GAP_LE_Event_Data_s.Event_Data.GAP_LE_Advertising_Report_Event_Data->Advertising_Data[Index]); //ptr to data for Index'th entry in the event report
+									  //TODO: identify BT devices, find any CC2564MODA modules, connect IFF the device is a MODA module (temporary solution)
+									  Boolean_t deviceIsMODA = FALSE; //TODO: implement this ^^^^^
+									  if (DeviceEntryPtr_s->Advertising_Report_Type == rtConnectableUndirected) { //this is receiver
+										  BD_ADDRToStr(DeviceEntryPtr_s->BD_ADDR, BoardStr);
+										  temp.Params[0].strParam = BoardStr;
+										  temp.NumberofParameters = 1;
+										  ret_val = ConnectLE(&temp);
+										  if (!ret_val) {
+											  ret_val = GetRemoteAppearance(&temp);
+											  if (!ret_val) {
+												  if (DeviceInfo_s->GAPSClientInfo.DeviceAppearanceHandle == GAP_DEVICE_APPEARANCE_VALUE_S23_DAD_RSA) {
+													  //TODO: successful connection established, complete pairing and request transmission of data
+												  }
+												  else {
+													  ret_val = DisconnectLE(&temp);
+													  if (!ret_val) {
+														  //TODO: log connecting / disconnecting to non-rsa device.
+													  }
+													  else
+														  DisplayFunctionError("DisconnectLE", ret_val);
+												  }
+											  }
+											  else
+												  DisplayFunctionError("GetRemoteAppearance", ret_val);
+										  }
+										  else {
+											  //TODO: log failed connection attempt
+										  }
+									  }
+									  else
+										  DisplayFunctionError("No RSA Modules Detected", ret_val);
+								  }
+							  }
+							  else
+								  DisplayFunctionError("StartScanning", ret_val);
+						  }
+						  else
+							  DisplayFunctionError("AdvertiseLE", ret_val);
+					  }
+					  else
+						  DisplayFunctionError("GAP_Query_Local_BD_ADDR", ret_val);
+
+					  if (!ret_val) {
+
+
+
+
+						  /* Return success to the caller.                      */
+						  ret_val = (int)BluetoothStackID;
+					  }
+					  else
+						  DisplayFunctionError("SetDiscoverabilityMode", ret_val);
+				  }
                   else
-                	  DisplayFunctionError("SetDiscoverabilityMode", ret_val);
+                	  DisplayFunctionError("SetLocalAppearance", ret_val);
                }
                else
                   DisplayFunctionError("SetPairable", ret_val);

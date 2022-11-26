@@ -20,6 +20,8 @@
 #include "SS1BTGAT.h"       /* Bluetooth Stack GATT API Prototypes/Constants. */
 #include "HRSTypes.h"       /* Heart Rate Service Types/Constants.            */
 
+//TODO: go absolutely ham on this file, eventually deleting it once all references to it elsewhere are gone
+
    /* Error Return Codes.                                               */
 
    /* Error Codes that are smaller than these (less than -1000) are     */
