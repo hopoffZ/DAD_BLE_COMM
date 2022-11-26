@@ -16,6 +16,8 @@
 
 #include "SS1BTPS.h"             /* Main SS1 Bluetooth Stack Header.          */
 #include "BTPSKRNL.h"            /* BTPS Kernel Prototypes/Constants.         */
+#include "receiver.h"
+#include "sender.h"
 
    /* The following is used as a printf replacement.                    */
 //TODO: change this since we're not using console

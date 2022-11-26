@@ -61,6 +61,7 @@ static void ProcessInputTask(void *UserParameter)
    {
 	   if (SENDER) {
 		   //TODO: grab SPE input, send across BT
+		   //TODO: HRS.c has a couple functions that can be templated for this
 	   }
 	   else if (RECEIVER) {
 		   //TODO: grab HMI input, pass to functions from receiver.h
