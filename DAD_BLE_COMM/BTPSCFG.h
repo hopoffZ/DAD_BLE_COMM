@@ -351,9 +351,9 @@
 #define BTPS_CONFIGURATION_GLS_MAXIMUM_SUPPORTED_INSTANCES                1
 #define BTPS_CONFIGURATION_GLS_SUPPORT_MEASUREMENT_CONTEXT                1
 
-   /* DAD Configuration.                                                */
-#define BTPS_CONFIGURATION_DAD_MAXIMUM_SUPPORTED_INSTANCES                1
-#define BTPS_CONFIGURATION_DAD_SUPPORT_ENERGY_EXPENDED_STATUS             1
+   /* HRS Configuration.                                                */
+#define BTPS_CONFIGURATION_HRS_MAXIMUM_SUPPORTED_INSTANCES                1
+#define BTPS_CONFIGURATION_HRS_SUPPORT_ENERGY_EXPENDED_STATUS             1
 
    /* HTS Configuration.                                                */
 #define BTPS_CONFIGURATION_HTS_MAXIMUM_SUPPORTED_INSTANCES                1

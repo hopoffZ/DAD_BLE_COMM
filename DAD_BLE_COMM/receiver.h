@@ -19,4 +19,6 @@
 
 //TODO: structure for polling bluetooth communication and parsing out data
 
+//TODO: table of 32bit sensor IDs and their associated string names.
+
 #endif /* RECEIVER_H_ */

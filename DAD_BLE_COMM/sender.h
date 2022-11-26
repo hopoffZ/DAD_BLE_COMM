@@ -17,17 +17,13 @@
 
 #include "structures.h" //structures header file
 #include "packager.h"
+#include "GATTAPI.h"
+#include "stdint.h"
 
-struct Sender{
-    octuplet sensorType[8]; //array of 8 sensor types
-
-    struct Data data; //data object
-};
-
-struct sensorType identify(); //pull sensorType of each sensor currently active
-
-struct Data graball(); //pull data from all Packagers and synthesize
-
-void send(Data d);
+typedef struct _tagDAD_Measurement_Data_t
+{
+   uint32_t SensorName;
+   uint32_t reading;
+} DAD_Measurement_Data_t;
 
 #endif /* SENDER_H_ */
