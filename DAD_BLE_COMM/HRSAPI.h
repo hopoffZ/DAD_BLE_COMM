@@ -431,4 +431,19 @@ BTPSAPI_DECLARATION int BTPSAPI HRS_Decode_Body_Sensor_Location(unsigned int Val
    typedef int (BTPSAPI *PFN_HRS_Decode_Body_Sensor_Location_t)(unsigned int ValueLength, Byte_t *Value, Byte_t *BodySensorLocation);
 #endif
 
+   /* The following function is responsible for formatting a Heart Rate */
+   /* Control Command into a user specified buffer.  The first parameter*/
+   /* is the command to format.  The final two parameters contain the   */
+   /* length of the buffer, and the buffer, to format the command into. */
+   /* This function returns a zero if successful or a negative return   */
+   /* error code if an error occurs.                                    */
+   /* * NOTE * The BufferLength and Buffer parameter must point to a    */
+   /*          buffer of at least                                       */
+   /*          HRS_HEART_RATE_CONTROL_POINT_VALUE_LENGTH in size.       */
+BTPSAPI_DECLARATION int BTPSAPI HRS_Format_Heart_Rate_Control_Command(HRS_Heart_Rate_Control_Command_t Command, unsigned int BufferLength, Byte_t *Buffer);
+
+#ifdef INCLUDE_BLUETOOTH_API_PROTOTYPES
+   typedef int (BTPSAPI *PFN_HRS_Format_Heart_Rate_Control_Command_t)(HRS_Heart_Rate_Control_Command_t Command, unsigned int BufferLength, Byte_t *Buffer);
+#endif
+
 #endif

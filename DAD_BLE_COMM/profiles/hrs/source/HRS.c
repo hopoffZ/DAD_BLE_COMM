@@ -22,30 +22,22 @@
 
 //TODO: completely gut this file and essentially use its skeleton to create a DAD module, eventually renaming the file itself.
 
-   /* The following controls the number of supported DAD instances.     */
-#define DAD_MAXIMUM_SUPPORTED_INSTANCES                 (BTPS_CONFIGURATION_DAD_MAXIMUM_SUPPORTED_INSTANCES)
+   /* The following controls the number of supported HRS instances.     */
+#define HRS_MAXIMUM_SUPPORTED_INSTANCES                 (BTPS_CONFIGURATION_HRS_MAXIMUM_SUPPORTED_INSTANCES)
 
-#if BTPS_CONFIGURATION_DAD_SUPPORT_BODY_SENSOR_LOCATION
+#if BTPS_CONFIGURATION_HRS_SUPPORT_BODY_SENSOR_LOCATION
 
-   /* The following defines the DAD Instance Data, which contains sensor   */
-   /* location and is unique for each DAD Service Instance.                */
-typedef __PACKED_STRUCT_BEGIN__ struct _tagDAD_Instance_Data_t
+   /* The following defines the HRS Instance Data, that contains data   */
+   /* is unique for each HRS Service Instance.                          */
+typedef __PACKED_STRUCT_BEGIN__ struct _tagHRS_Instance_Data_t
 {
-   NonAlignedWord_t RSA_Sensor_Locations_Length;
-   char* RSA_Sensor_Location_0;
-   char* RSA_Sensor_Location_1;
-   char* RSA_Sensor_Location_2;
-   char* RSA_Sensor_Location_3;
-   char* RSA_Sensor_Location_4;
-   char* RSA_Sensor_Location_5;
-   char* RSA_Sensor_Location_6;
-   char* RSA_Sensor_Location_7;
+   NonAlignedWord_t Body_Sensor_Location_Length;
+   NonAlignedByte_t Body_Sensor_Location;
+} __PACKED_STRUCT_END__ HRS_Instance_Data_t;
 
-} __PACKED_STRUCT_END__ DAD_Instance_Data_t;
+#define HRS_INSTANCE_DATA_SIZE                           (sizeof(HRS_Instance_Data_t))
 
-#define DAD_INSTANCE_DATA_SIZE                           (sizeof(DAD_Instance_Data_t))
-
-#define DAD_SENSOR_LOCATION_INSTANCE_TAG            (BTPS_STRUCTURE_OFFSET(DAD_Instance_Data_t, RSA_Sensor_Location_Length))
+#define HRS_BODY_SENSOR_LOCATION_INSTANCE_TAG            (BTPS_STRUCTURE_OFFSET(HRS_Instance_Data_t, Body_Sensor_Location_Length))
 
 #endif
 
@@ -184,16 +176,16 @@ typedef struct _tagHRSServerInstance_t
    /* declared static are initialized to 0 automatically by the         */
    /* compiler as part of standard C/C++).                              */
 
-#if BTPS_CONFIGURATION_DAD_SUPPORT_BODY_SENSOR_LOCATION
+#if BTPS_CONFIGURATION_HRS_SUPPORT_BODY_SENSOR_LOCATION
 
-static DAD_Instance_Data_t InstanceData[DAD_MAXIMUM_SUPPORTED_INSTANCES];
+static HRS_Instance_Data_t InstanceData[HRS_MAXIMUM_SUPPORTED_INSTANCES];
                                             /* Variable which holds all */
                                             /* data that is unique for  */
                                             /* each service instance.   */
 
 #endif
 
-static HRSServerInstance_t InstanceList[DAD_MAXIMUM_SUPPORTED_INSTANCES];
+static HRSServerInstance_t InstanceList[HRS_MAXIMUM_SUPPORTED_INSTANCES];
                                             /* Variable which holds the */
                                             /* service instance data.   */
 
@@ -619,7 +611,7 @@ static Boolean_t InstanceRegisteredByStackID(unsigned int BluetoothStackID)
    Boolean_t    ret_val = FALSE;
    unsigned int Index;
 
-   for(Index=0;Index<DAD_MAXIMUM_SUPPORTED_INSTANCES;Index++)
+   for(Index=0;Index<HRS_MAXIMUM_SUPPORTED_INSTANCES;Index++)
    {
       if((InstanceList[Index].BluetoothStackID == BluetoothStackID) && (InstanceList[Index].ServiceID))
       {
@@ -656,7 +648,7 @@ static HRSServerInstance_t *AcquireServiceInstance(unsigned int BluetoothStackID
          LocalInstanceID = *InstanceID;
 
          /* Verify that the Instance ID is valid.                       */
-         if((LocalInstanceID) && (LocalInstanceID <= DAD_MAXIMUM_SUPPORTED_INSTANCES))
+         if((LocalInstanceID) && (LocalInstanceID <= HRS_MAXIMUM_SUPPORTED_INSTANCES))
          {
             /* Decrement the LocalInstanceID (to access the InstanceList*/
             /* which is 0 based).                                       */
@@ -676,7 +668,7 @@ static HRSServerInstance_t *AcquireServiceInstance(unsigned int BluetoothStackID
             if(!LocalInstanceID)
             {
                /* Try to find a free instance.                          */
-               for(Index=0;Index<DAD_MAXIMUM_SUPPORTED_INSTANCES;Index++)
+               for(Index=0;Index<HRS_MAXIMUM_SUPPORTED_INSTANCES;Index++)
                {
                   /* Check to see if this instance is being used.       */
                   if(!(InstanceList[Index].ServiceID))
