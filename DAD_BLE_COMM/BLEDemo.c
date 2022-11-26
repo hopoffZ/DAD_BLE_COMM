@@ -4008,7 +4008,7 @@ static void BTPSAPI GAP_LE_Event_Callback(unsigned int BluetoothStackID, GAP_LE_
                      SlavePairingRequestResponse(Authentication_Event_Data->BD_ADDR);
                      break;
                   case latConfirmationRequest:
-                     Display(("latConfirmationRequest.\r\n"));
+                     Display(("latConfirmationRequest.\r\n")); //TODO: decide on use of Just Works or more secure pairing (probably Just Works)
 
                      if(Authentication_Event_Data->Authentication_Event_Data.Confirmation_Request.Request_Type == crtNone)
                      {
