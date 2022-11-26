@@ -29,6 +29,8 @@
                                                          /* are supported by  */
                                                          /* this application. */
 
+#define receiver 1 //TODO: THIS NEEDS BETTER IMPLEMENTATION, RIGHT NOW MANUALLY 1 = RECEIVER 0 = SENDER
+
 #define MAX_NUM_OF_PARAMETERS                       (5)  /* Denotes the max   */
                                                          /* number of         */
                                                          /* parameters a      */
@@ -4939,21 +4941,30 @@ int InitializeApplication(HCI_DriverInformation_t *HCI_DriverInformation, BTPS_I
                 	  BD_ADDRToStr(BD_ADDR, BoardStr);
                 	  temp.Params[1].strParam = BoardStr;
                 	  ret_val = AdvertiseLE(&temp);
-                	  if (!ret_val) {
+                	  if (!ret_val && receiver) { //only attempt connection if this device is receiver module
                 		  ret_val = StartScanning(&temp);
                 		  if (!ret_val) {
-                			  //TODO: get addresses from scan results (currently printed to console?) into connectLE's tempparam
                 			  int Index;
                 			  for(Index = 0; Index < GAP_LE_Event_Data_s->Event_Data.GAP_LE_Advertising_Report_Event_Data->Number_Device_Entries; Index++) {
                 				  DeviceEntryPtr_s = &(GAP_LE_Event_Data_s->Event_Data.GAP_LE_Advertising_Report_Event_Data->Advertising_Data[Index]); //ptr to data for Index'th entry in the event report
                 				  //TODO: identify BT devices, find any CC2564MODA modules, connect IFF the device is a MODA module (temporary solution)
-                			  }
-                			  ret_val = ConnectLE(&temp);
-                			  if (!ret_val) {
+                				  bool deviceIsMODA = false; //TODO: implement this ^^^^^
+                				  if (deviceIsMODA) {
+                					  if (DeviceEntryPtr_s->Advertising_Report_Type == rtConnectableUndirected) { //this is receiver
+                						  BD_ADDRToStr(DeviceEntryPtr_s->BD_ADDR, BoardStr);
+                						  temp.Params[0].strParam = BoardStr;
+                						  temp.NumberofParameters = 1;
+                						  ret_val = ConnectLE(&temp);
+                						  if (!ret_val) {
 
+                						  }
+                						  else
+                							  DisplayFunctionError("ConnectLE", ret_val);
+                					  }
+                					  else
+                						  DisplayFunctionError("No RSA Modules Detected", ret_val);
+                				  }
                 			  }
-                			  else
-                				  DisplayFunctionError("ConnectLE", ret_val);
                 		  }
                 		  else
                 			  DisplayFunctionError("StartScanning", ret_val);
