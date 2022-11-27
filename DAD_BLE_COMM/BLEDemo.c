@@ -4672,6 +4672,7 @@ static void BTPSAPI GATT_Connection_Event_Callback(unsigned int BluetoothStackID
             {
                /* Save the Connection ID for later use.                 */
                ConnectionID = GATT_Connection_Event_Data->Event_Data.GATT_Device_Connection_Data->ConnectionID;
+               ConnectionID_s = ConnectionID;
 
                Display(("\r\netGATT_Connection_Device_Connection with size %u: \r\n", GATT_Connection_Event_Data->Event_Data_Size));
                BD_ADDRToStr(GATT_Connection_Event_Data->Event_Data.GATT_Device_Connection_Data->RemoteDevice, BoardStr);

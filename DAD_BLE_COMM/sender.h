@@ -26,4 +26,19 @@ typedef struct _tagDAD_Measurement_Data_t
    uint32_t reading;
 } DAD_Measurement_Data_t;
 
+typedef struct
+{
+  uint32_t Low;
+  uint32_t Hi;
+} Word64_t;
+
+typedef union
+{
+  uint64_t Int64Val;
+  Word64_t WordVal;
+} Splitter_t;
+
+int DAD_Notify_Handheld(unsigned int BluetoothStackID, unsigned int ConnectionID, DAD_Measurement_Data_t *DAD_Measurement);
+
+
 #endif /* SENDER_H_ */

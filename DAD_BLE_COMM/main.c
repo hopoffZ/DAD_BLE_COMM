@@ -2,6 +2,7 @@
 #include "HCITRANS.h"
 #include "main.h"
 #include "msp.h"
+#include "BLEDemo.h"
 
 #define SENDER   1
 #define RECEIVER 0 //1: on 0: off, CANNOT be the same
@@ -63,11 +64,22 @@ static void ProcessInputTask(void *UserParameter)
 		   //TODO: grab SPE input, send across BT
 		   //TODO: HRS.c has a couple functions that can be templated for this
 		   //Temporary generation of dummy SPI data
-		   uint8_t dummySPI = 0b01010101;
+		   uint32_t dummySPI = 0b01010101010101010101010101010101;
+		   DAD_Measurement_Data_t reading;
+		   reading.SensorName = dummySPI;
+		   reading.reading = dummySPI;
+		   unsigned int ret_val = DAD_Notify_Handheld(BluetoothStackID, ConnectionID_s, &reading);
+		   if (!ret_val) {
 
+		   }
+		   else {
+
+		   }
 	   }
 	   else if (RECEIVER) {
 		   //TODO: grab HMI input, pass to functions from receiver.h
+
+
 	   }
    }
 }

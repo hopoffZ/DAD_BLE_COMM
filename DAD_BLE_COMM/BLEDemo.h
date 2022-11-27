@@ -13,7 +13,7 @@
 #ifndef __BLEDEMO_H__
 #define __BLEDEMO_H__
 
-
+static unsigned int ConnectionID_s;
 
 
 

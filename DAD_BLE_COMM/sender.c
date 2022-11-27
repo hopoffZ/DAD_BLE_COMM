@@ -49,9 +49,12 @@ int DAD_Notify_Handheld(unsigned int BluetoothStackID, unsigned int ConnectionID
 		   BTPS_MemInitialize(NotificationData, 0, NotificationDataLength);
 		   uint32_t reading = DAD_Measurement->reading;
 		   uint32_t name = DAD_Measurement->SensorName;
-		   NotificationData = ;
+		   Splitter_t splitter;
+		   splitter.WordVal.Low = reading;
+		   splitter.WordVal.Hi = name;
+		   NotificationData = &splitter.Int64Val;
 		   /* Attempt to send the notification.                  */
-		   ret_val = GATT_Handle_Value_Notification(ServiceInstance->BluetoothStackID, ServiceInstance->ServiceID, ConnectionID, HRS_HEART_RATE_MEASUREMENT_ATTRIBUTE_OFFSET, (Word_t)NotificationDataLength, (Byte_t *)NotificationData);
+		   ret_val = GATT_Handle_Value_Notification(BluetoothStackID, 0, ConnectionID, 2, (Word_t)NotificationDataLength, (Byte_t *)NotificationData);
 		   if(ret_val > 0) ret_val = 0;
 
 		   /* Free the previously allocated memory.                 */
@@ -62,7 +65,7 @@ int DAD_Notify_Handheld(unsigned int BluetoothStackID, unsigned int ConnectionID
 	 }
 
 	 /* UnLock the previously locked Bluetooth Stack.               */
-	 BSC_UnLockBluetoothStack(ServiceInstance->BluetoothStackID);
+	 BSC_UnLockBluetoothStack(BluetoothStackID);
    }
    else
       ret_val = -1;

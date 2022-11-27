@@ -18,6 +18,7 @@
 
 #include "SS1BTPS.h"             /* Main SS1 Bluetooth Stack Header.          */
 #include "BTPSKRNL.h"            /* BTPS Kernel Prototypes/Constants.         */
+#include "stdint.h"
 
 typedef struct Octuplet octuplet; //8-bit unsigned binary value
 

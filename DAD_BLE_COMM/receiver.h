@@ -21,4 +21,9 @@
 
 //TODO: table of 32bit sensor IDs and their associated string names.
 
+typedef struct {
+	uint32_t codes[8];
+	char* stringNames[8];
+} SensorTable;
+
 #endif /* RECEIVER_H_ */
