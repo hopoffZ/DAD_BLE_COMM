@@ -1261,8 +1261,6 @@ static int OpenStack(HCI_DriverInformation_t *HCI_DriverInformation, BTPS_Initia
          /* Initialize BTPSKNRL.                                        */
          BTPS_Init((void *)BTPS_Initialization);
 
-         Display(("\r\nOpenStack().\r\n"));
-
          /* Initialize the Stack                                        */
          Result = BSC_Initialize(HCI_DriverInformation, 0);
 

@@ -352,8 +352,8 @@ void HAL_DisableController(void)
       /* on reset and it will take several days to roll over at a 1     */
       /* millisecond tick rate.                                         */
       TargetTickCount = TickCount + CONTROLLER_MINIMUM_NSHUTD_LOW_TIME + 1;
-      while(TickCount < TargetTickCount)
-         ;
+      //while(TickCount < TargetTickCount)
+         //;
    }
 }
 
